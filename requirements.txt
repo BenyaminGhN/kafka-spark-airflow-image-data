@@ -3,3 +3,7 @@ requests
 json5
 pyspark
 apache-airflow
+awscli
+nibabel  
+nilearn
+torchmetrics
