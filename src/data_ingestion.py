@@ -6,20 +6,13 @@ from omegaconf import OmegaConf
 from omegaconf.dictconfig import DictConfig
 
 
-def read_meta_info():
-    base_dir = Path("./data/data-source")
-    participants_file = base_dir / 'participants.tsv'
-    participants_df = pd.read_csv(participants_file, sep='\t')
-
-    return participants_df
-
 def create_meta_df(config, to_save=True):
-    base_dir = Path(config.data_source_path)
-    participants_df = pd.read_csv(base_dir / "participants.tsv", sep='\t')
+    data_dir = Path(config.data_source_path)
+    participants_df = pd.read_csv(data_dir / "participants.tsv", sep='\t')
     meta_data = []
     for participant_id in participants_df['participant_id']:
-        anat_path = base_dir / str(participant_id) / 'anat' / f'{participant_id}_T1w.nii.gz'
-        func_path = base_dir / str(participant_id) / 'func' / f'{participant_id}_task-rest_bold.nii.gz'
+        anat_path = data_dir / str(participant_id) / 'anat' / f'{participant_id}_T1w.nii.gz'
+        func_path = data_dir / str(participant_id) / 'func' / f'{participant_id}_task-rest_bold.nii.gz'
 
         if anat_path.exists() and func_path.exists():
             participant_data = participants_df[participants_df['participant_id'] == participant_id].to_dict(orient='records')[0]
