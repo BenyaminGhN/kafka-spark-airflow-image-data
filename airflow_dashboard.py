@@ -4,7 +4,6 @@ from airflow.operators.python import PythonOperator
 from datetime import datetime, timedelta
 from kafka_producer import initiate_stream  
 
-"""
 default_args = {
     'owner': 'airflow',
     'depends_on_past': False,
@@ -49,8 +48,8 @@ train_task = PythonOperator(
 )
 
 kafka_producer_task >> spark_processing_task >> train_task
-"""
 
+"""
 # Configuration for the DAG's start date
 DAG_START_DATE = datetime(2018, 12, 21, 12, 12)
 
@@ -79,3 +78,5 @@ with DAG(
     )
 
     kafka_stream_task
+
+"""
