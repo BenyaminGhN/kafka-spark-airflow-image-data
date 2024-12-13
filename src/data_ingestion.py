@@ -13,19 +13,21 @@ def read_meta_info():
 
     return participants_df
 
-def create_meta_df(config, participants_df, path_to_csv="./data/meta_info.csv"):
+def create_meta_df(config, to_save=True):
+    base_dir = Path(config.data_source_path)
+    participants_df = pd.read_csv(base_dir / "participants.tsv", sep='\t')
     meta_data = []
     for participant_id in participants_df['participant_id']:
-        anat_path = os.path.join(base_dir, participant_id, 'anat', f'{participant_id}_T1w.nii.gz')
-        func_path = os.path.join(base_dir, participant_id, 'func', f'{participant_id}_task-rest_bold.nii.gz')
+        anat_path = base_dir / str(participant_id) / 'anat' / f'{participant_id}_T1w.nii.gz'
+        func_path = base_dir / str(participant_id) / 'func' / f'{participant_id}_task-rest_bold.nii.gz'
 
-        if os.path.exists(anat_path) and os.path.exists(func_path):
+        if anat_path.exists() and func_path.exists():
             participant_data = participants_df[participants_df['participant_id'] == participant_id].to_dict(orient='records')[0]
-            participant_data['anat_path'] = anat_path
-            participant_data['func_path'] = func_path
+            participant_data['anat_path'] = str(anat_path)
+            participant_data['func_path'] = str(func_path)
 
             # add label
-            participant_data['label'] = 1 if participant_data['group'].values == 'dper' else 0
+            participant_data['label'] = 1 if str(participant_data['group']) == "depr" else 0
 
             meta_data.append(participant_data)
 
@@ -37,8 +39,11 @@ def create_meta_df(config, participants_df, path_to_csv="./data/meta_info.csv"):
     splits[eval_indices] = 'evaluation'
     meta_df['Split'] = splits
 
-    if path_to_csv is not None:
-        meta_df.to_csv(path_to_csv, index=False)
+    if to_save:
+        meta_df.to_csv(config.meta_info_path, index=False)
 
-    return path_to_csv
+    return config.meta_info_path
+    
+def prepare_data(config):
+    meta_df = pd.read_csv(config.meta_info_path)
     
