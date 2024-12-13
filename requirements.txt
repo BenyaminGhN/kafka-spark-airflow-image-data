@@ -7,3 +7,6 @@ awscli
 nibabel  
 nilearn
 torchmetrics
+omegaconf
+matplotlib
+sparktorch

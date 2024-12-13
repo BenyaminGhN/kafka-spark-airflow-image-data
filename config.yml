@@ -1,0 +1,25 @@
+seed: 123
+data_dir: "./data"
+data_source_path: "./data/data-source"
+meta_info_path: "./data/meta_info.csv"
+
+model: src.model_building.ResNet50
+run_dir: './run/resnet50/'
+
+data_ingestion:
+  eval_split: 0.2
+
+data_pipeline:
+  # data pipline arguments for data prepartion 
+  class_names: ['normal', 'abnormal'] # label names training
+  is_binary: true
+  val_split: 0.2 # validation split ratio
+  shuffle: true # shuffle the whole datasets before training
+  batch_size: 16 # batch size ( train, validation, evlauation )
+  train_for_submittion: true
+
+preprocessing:
+  target_shape: [224, 224, 15]
+
+training:
+  model: 

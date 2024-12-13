@@ -164,6 +164,7 @@ cython_debug/
 # data
 data/
 dags/
+asset/
 
 # gitpod files
 .gitpod.yml
