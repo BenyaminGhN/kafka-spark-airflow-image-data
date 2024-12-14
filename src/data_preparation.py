@@ -47,8 +47,8 @@ def preporcess(data, labels):
     data_normalized = (data_reshaped - data_reshaped.min()) / (data_reshaped.max() - data_reshaped.min())
     labels_reshaped = np.repeat(labels, 15)
 
-    data_tensor = torch.tensor(data_normalized, dtype=torch.float32)
-    labels_tensor = torch.tensor(labels_reshaped, dtype=torch.long)
+    data_tensor = torch.tensor(data_normalized, dtype=torch.uint8)
+    labels_tensor = torch.tensor(labels_reshaped, dtype=torch.int32)
 
     data_tensor_u = data_tensor.unsqueeze(1)
     data_tensor_3_channel = data_tensor_u.repeat(1, 3, 1, 1)
@@ -83,14 +83,16 @@ def get_train_val_generators(config):
         test_size=config.data_pipeline.val_split, random_state=config.seed
     )
 
-    batch_size = config.data_pipeline.batch_size
-    train_dataset = TensorDataset(train_data, train_labels)
-    train_dataloader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+    return train_data, val_data, train_labels, val_labels
 
-    val_dataset = TensorDataset(val_data, val_labels)
-    val_dataloader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
+    # batch_size = config.data_pipeline.batch_size
+    # train_dataset = TensorDataset(train_data, train_labels)
+    # train_dataloader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
 
-    return train_dataloader, val_dataloader
+    # val_dataset = TensorDataset(val_data, val_labels)
+    # val_dataloader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
+
+    # return train_dataloader, val_dataloader
 
 def get_test_generator(config):
     pass
