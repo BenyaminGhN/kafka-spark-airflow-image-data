@@ -4,7 +4,8 @@ data_source_path: "./data/data-source"
 meta_info_path: "./data/meta_info.csv"
 
 model: src.model_building.ResNet50
-run_dir: './run/resnet50/'
+run_dir: './run/vit/'
+model_path: './model/vit/model.pth.tar'
 
 data_ingestion:
   eval_split: 0.2
