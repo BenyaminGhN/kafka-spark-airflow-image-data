@@ -52,6 +52,7 @@ def get_prediction():
     model = get_model(config)
     consumer = configure_kafka()
     print(f"consumer: {consumer}")
+
     # Process the images in real-time
     for message in consumer:
         print(f"message: {message}")
@@ -72,6 +73,7 @@ def get_prediction():
             output = model(img_tensor)
             _, predicted = torch.max(output, 1)
 
+        class_names = ["controlled", "depression"]
         logger.info(f"Classified as: {class_names[predicted.item()]}")
 
 if __name__ == "__main__":
