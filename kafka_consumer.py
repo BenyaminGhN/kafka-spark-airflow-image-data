@@ -5,17 +5,17 @@ import sys
 import types
 from omegaconf import OmegaConf
 
-# # Following session is to fix the six.moves issue in kafka-python package
-# m = types.ModuleType("kafka.vendor.six.moves", "Mock module")
-# setattr(m, "range", range)
-# sys.modules["kafka.vendor.six.moves"] = m
+# Following session is to fix the six.moves issue in kafka-python package
+m = types.ModuleType("kafka.vendor.six.moves", "Mock module")
+setattr(m, "range", range)
+sys.modules["kafka.vendor.six.moves"] = m
 
 import matplotlib.pyplot as plt
 import numpy as np
 import torch
 import torch.utils
 import torchvision.transforms as transforms
-# from kafka import KafkaConsumer
+from kafka import KafkaConsumer
 import timm
 
 
