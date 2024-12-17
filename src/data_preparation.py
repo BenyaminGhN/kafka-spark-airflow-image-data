@@ -58,7 +58,7 @@ def preporcess(data, labels):
 
     return preprocessed_data, preprocessed_labels
 
-def get_train_val_generators(config):
+def get_train_val_datasets(config):
     data_dir = Path(config.data_source_path)
     meta_df = pd.read_csv(config.meta_info_path)
     config.meta_info_path
@@ -83,16 +83,10 @@ def get_train_val_generators(config):
         test_size=config.data_pipeline.val_split, random_state=config.seed
     )
 
-    return train_data, val_data, train_labels, val_labels
+    train_dataset = TensorDataset(train_data, train_labels)
+    val_dataset = TensorDataset(val_data, val_labels)
 
-    # batch_size = config.data_pipeline.batch_size
-    # train_dataset = TensorDataset(train_data, train_labels)
-    # train_dataloader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
-
-    # val_dataset = TensorDataset(val_data, val_labels)
-    # val_dataloader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
-
-    # return train_dataloader, val_dataloader
+    return train_dataset, val_dataset
 
 def get_test_generator(config):
     pass

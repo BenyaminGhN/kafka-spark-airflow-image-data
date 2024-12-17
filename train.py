@@ -17,7 +17,7 @@ from src.data_preparation import get_train_val_generators
 
 from pyspark.sql import SparkSession
 from pyspark import SparkContext
-# SparkSession.builder.appName("torch-training").getOrCreate()
+
 
 def train(train_dataset, val_dataset, device):
 
@@ -99,8 +99,6 @@ def main():
         .appName("PyTorch Distributed Training with PySpark") \
         .getOrCreate()
 
-    sc = spark.sparkContext
-
     config_path = Path("config.yml")
     config = OmegaConf.load(config_path)
 
@@ -111,8 +109,6 @@ def main():
     # train_dataloader, val_dataloader = get_train_val_generators(config)
     train_data, val_data, train_labels, val_labels = get_train_val_generators(config)
     batch_size = config.data_pipeline.batch_size
-    train_dataset = TensorDataset(train_data, train_labels)
-    val_dataset = TensorDataset(val_data, val_labels)
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(device)
@@ -120,10 +116,6 @@ def main():
 
     # Parallelize data
     num_procc = 2
-    # rdd = sc.parallelize(list(range(num_procc)), numSlices=num_procc)
-    # print(rdd.collect())
-    # rdd = sc.parallelize(train_dataloader, numSlices=4)
-
     distributor = TorchDistributor(
         num_processes=num_procc,
         local_mode=True,
@@ -131,23 +123,15 @@ def main():
     )
 
     model_states = distributor.run(train, train_dataset, val_dataset, device)
-    # torch.save(model, config.model_path)
-
-    # # Aggregate model weights
-    # final_state_dict = model_states[0]
-    # for key in final_state_dict.keys():
-    #     final_state_dict[key] = torch.stack([state[key] for state in model_states]).mean(0)
 
     # Load final model
-
     final_model = timm.create_model('efficientformerv2_s0.snap_dist_in1k', pretrained=False, num_classes=2)
     model_states = torch.load(config.model_path, weights_only=True)
-    print(model_states.keys())
     for key in list(model_states.keys()):
         model_states[key.replace('module.', '')] = model_states.pop(key)
     final_model.load_state_dict(model_states)
 
-    print("Training completed. Final model state_dict:")
+    print("Training completed.")
     
 if __name__ == "__main__":
     main()

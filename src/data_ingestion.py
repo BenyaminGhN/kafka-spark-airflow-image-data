@@ -4,6 +4,7 @@ import numpy as np
 import json
 from omegaconf import OmegaConf
 from omegaconf.dictconfig import DictConfig
+import shutil
 
 
 def create_meta_df(config, to_save=True):
@@ -36,7 +37,20 @@ def create_meta_df(config, to_save=True):
         meta_df.to_csv(config.meta_info_path, index=False)
 
     return config.meta_info_path
-    
-def prepare_data(config):
+
+def create_datalake_test():
+    config_path = Path("./config.yml")
+    config = OmegaConf.load(config_path)
+
+    data_dir = Path(config.data_source_path)
     meta_df = pd.read_csv(config.meta_info_path)
-    
+    val_df = meta_df[meta_df["Split"]=="evaluation"]
+    sub_df = val_df.sample(4, random_state=123)
+    for participant_id in sub_df['participant_id']:
+        case_dir = data_dir / str(participant_id) 
+        source = str(case_dir)
+        destination = str(Path(config.test_data_dir) / case_dir.name)
+        shutil.copytree(source, destination, dirs_exist_ok = True)
+
+if __name__ == "__main__":
+    pass    
